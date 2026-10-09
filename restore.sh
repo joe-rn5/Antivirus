@@ -37,16 +37,18 @@ while true; do
 
     read -p "> " file_choice
 
+    if [[ ! "$file_choice" =~ ^[0-9]+$ ]]; then
+        echo "Invalid choice"
+        continue
+    fi
+    
     if [ "$file_choice" -lt 1 ] || [ "$file_choice" -gt "${#files[@]}" ]; then
         echo "Invalid choice"
         continue
         
     fi
 
-    if [[ ! "$x" =~ ^[0-9]+$ ]]
-        echo "Invalid choice"
-        continue
-    fi
+    
 
     selected_file="${files[$((file_choice - 1))]}"
     filename=$(basename "$selected_file")
