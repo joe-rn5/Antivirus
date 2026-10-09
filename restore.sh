@@ -24,7 +24,7 @@ fi
 
 while true; do
     if [ -z "$(ls -A "$malicious_dir")" ]; then
-    echo "No malicious files to review"
+    echo "No malicious files to review."
     exit 0
     fi
 
@@ -38,39 +38,41 @@ while true; do
     read -p "> " file_choice
 
     if [ "$file_choice" -lt 1 ] || [ "$file_choice" -gt "${#files[@]}" ]; then
-    echo "Invalid choice"
-    continue
+        echo "Invalid choice"
+        continue
+        
     fi
-    echo ""
+
+    if [[ ! "$x" =~ ^[0-9]+$ ]]
+        echo "Invalid choice"
+        continue
+    fi
 
     selected_file="${files[$((file_choice - 1))]}"
     filename=$(basename "$selected_file")
 
     echo "For $filename:"
-    echo "Choose an action:"
-    echo "1. Restore "
-    echo "2. Delete "
-    echo "3. Go back"
+    echo "1: Restore this file back into dir (it was a false positive)"
+    echo "2: Permanently delete this file from malicious_dir (it was genuinely malicious)"
+    echo "3: Go back"
 
-    echo "enter your choice 1-3"
-    read choice
-    echo ""
+    read -p "> " choice
 
     case "$choice" in
      1)
         mv "$selected_file" "$dir/"
-        echo "Restored $filename to $dir"
+        echo "Restored $filename to $dir."
         ;;
      2)
         rm "$selected_file"
-        echo "$filename permanently deleted"
+        echo "$filename permanently deleted."
         ;;
      3)
         continue
         ;;
      *)
-        echo "Invalid action choice"
-        exit 1
+        echo "Invalid action choice."
+        continue
         ;;
     esac
 done

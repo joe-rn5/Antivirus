@@ -14,12 +14,10 @@ if [ ! -d "$dir" ]; then
 fi
 
 if [ ! -d "$malicious_dir" ]; then
-    echo "Error: $malicious_dir is not a directory"
-    exit 1
+    mkdir -p "$malicious_dir"
 fi
 
 extensions=("exe" "bat" "vbs" "scr" "ps1")
-keywords=("virus" "malware" "trojan" "worm" "ransomware")
 
 isMalicious() {
     local file="$1"
@@ -29,6 +27,7 @@ isMalicious() {
 
     if [[ "$filename" == *.* ]]; then
         extension="${filename##*.}"
+        extension="${extension,,}"
     fi
 
     for ext in "${extensions[@]}"; do
@@ -50,28 +49,29 @@ scanDir(){
     for file in "$dir"/*; do
         if [ -f "$file" ]; then
             if isMalicious "$file"; then
-                echo "Malicious file detected: $file"
-                cp "$file" "$malicious_dir/"
-                rm "$file"
-                echo "Deleted $file from $dir"
+                filename=$(basename "$file")
+                if cp "$file" "$malicious_dir/" && rm "$file"; then
+                    echo "$filename is malicious and it is DELETED"
+                fi
             fi
         fi
     done
 }
 
 if [ ! -f "directory-info.last" ]; then
-scanDir
-ls -l "$dir" >directory-info.last
+    scanDir
+    ls -l "$dir" > directory-info.last
 fi
 
  
 while true; do
    sleep "$interval"
+
    ls -l "$dir" > directory-info.new
+
     if ! cmp -s directory-info.last directory-info.new; then
-       echo "Directory contents changed. Scanning for malicious files..."
        scanDir
-       ls -l "$dir" >directory-info.last
+       ls -l "$dir" >directory-info.last    # update the last snapshot after scanning 
    fi   
 
 done
