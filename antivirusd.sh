@@ -22,8 +22,8 @@ extensions=("exe" "bat" "vbs" "scr" "ps1")
 isMalicious() {
     local file="$1"
     local filename
-    filename=$(basename "$file") #extract file name without dir path
-    local extension="" 
+    filename=$(basename "$file")
+    local extension=""
 
     if [[ "$filename" == *.* ]]; then
         extension="${filename##*.}"
@@ -36,9 +36,9 @@ isMalicious() {
         fi
     done
 
-    local ptrn="virus|malware|trojan|worm|ransomware"
+    local keywords="virus|malware|trojan|worm|ransomware"
     
-    if grep -E -q -i "$ptrn" "$file"; then
+    if grep -E -q -i "$keywords" "$file"; then
         return 0  # malicious
     fi
 
