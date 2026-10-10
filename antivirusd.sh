@@ -48,8 +48,11 @@ isMalicious() {
 scanDir(){
     for file in "$dir"/*; do
         if [ -f "$file" ]; then
+            filename=$(basename "$file")
+            if grep -Fqx -- "$filename" whitelist.txt; then
+                continue
+            fi
             if isMalicious "$file"; then
-                filename=$(basename "$file")
                 if cp "$file" "$malicious_dir/" && rm "$file"; then
                     echo "$filename is malicious and it is DELETED"
                 fi

@@ -41,7 +41,7 @@ while true; do
         echo "Invalid choice"
         continue
     fi
-    
+
     if [ "$file_choice" -lt 1 ] || [ "$file_choice" -gt "${#files[@]}" ]; then
         echo "Invalid choice"
         continue
@@ -62,8 +62,12 @@ while true; do
 
     case "$choice" in
      1)
-        mv "$selected_file" "$dir/"
-        echo "Restored $filename to $dir."
+        if mv "$selected_file" "$dir/"; then
+            echo "$filename" >> whitelist.txt
+            echo "Restored $filename to $dir."
+        else
+            echo "Failed to restore $filename."
+        fi
         ;;
      2)
         rm "$selected_file"
