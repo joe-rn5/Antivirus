@@ -49,6 +49,9 @@ scanDir(){
     for file in "$dir"/*; do
         if [ -f "$file" ]; then
             filename=$(basename "$file")
+            if [ ! -f "whitelist.txt" ]; then
+                touch whitelist.txt
+            fi
             if grep -Fqx -- "$filename" whitelist.txt; then
                 continue
             fi
